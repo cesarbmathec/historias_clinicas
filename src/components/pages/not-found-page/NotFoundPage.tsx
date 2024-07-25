@@ -1,6 +1,6 @@
 import { Typography, Button, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import "./NotFoundPage.scss"; // Importa tu archivo Sass
+import "./NotFoundPage.scss";
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
