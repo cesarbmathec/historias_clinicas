@@ -12,7 +12,8 @@ import "./Login.scss";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useAppDispatch } from "../../../app/hooks";
 import { getToken } from "../../../services";
-import { User } from "../../../models";
+import { PrivateRoutes, User } from "../../../models";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -22,13 +23,16 @@ const Login = () => {
     formState: { errors },
   } = useForm<User>();
 
+  const navigate = useNavigate();
+
   const onSubmit: SubmitHandler<User> = (data) => {
     if (data) {
       try {
-        console.log(JSON.stringify(data));
         dispatch(getToken(data));
+
+        navigate(`/${PrivateRoutes.PRIVATE}`, { replace: false });
       } catch (e) {
-        console.error(e);
+        console.log(e);
       }
     }
   };
@@ -57,8 +61,8 @@ const Login = () => {
             style={{ marginTop: 1 }}
           >
             <TextField
+              variant="outlined"
               margin="normal"
-              required
               fullWidth
               id="username"
               label="Username"
@@ -72,13 +76,12 @@ const Login = () => {
               helperText={errors.username ? errors.username.message + "" : ""}
             />
             <TextField
+              variant="outlined"
               margin="normal"
-              required
               fullWidth
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
               InputProps={{
                 startAdornment: <i className="fa-solid fa-lock" />,
               }}

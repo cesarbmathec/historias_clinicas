@@ -2,15 +2,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TokenResult, TokenState } from "../../../models";
 import { getToken } from "../../../services";
 import { RootState } from "../../../app";
-import { persistLocalStorage } from "../../../utilities";
+import { keyToken, persistLocalStorage } from "../../../utilities";
 
 export const initialStateToken: TokenState = {
   tokenResult: null,
   error: "",
   loading: false,
 };
-
-export const keyToken = "token";
 
 export const tokenSlice = createSlice({
   name: "token",

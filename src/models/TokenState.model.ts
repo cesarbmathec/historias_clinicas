@@ -7,4 +7,4 @@ export interface TokenState {
     tokenResult: TokenResult | null;
     error: string;
     loading: boolean;
-  }
+}

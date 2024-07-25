@@ -15,18 +15,22 @@ import {
   Typography,
 } from "@mui/material";
 import "./MainLayout.scss";
-import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { clearLocalStorage } from "../../utilities";
+import { PublicRoutes } from "../../models";
 
 type Props = {};
-
 const drawerWidth = 240;
 
-function MainLayout(_props: Props) {
+const MainLayout = (_props: Props) => {
+  // Hooks
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [open, setOpen] = useState(false);
 
+  // Métodos
   const handleDrawerClose = () => {
     setIsClosing(true);
     setMobileOpen(false);
@@ -45,6 +49,32 @@ function MainLayout(_props: Props) {
   const handleClick = () => {
     setOpen(!open);
   };
+
+  // Tiempo de inactividad
+  const startTimer = () => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    const restarTimer = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        // Borrar el token de autenticación después de x minutos de inactividad
+        clearLocalStorage("token");
+        // Mostrar un mensaje de sesión expirada y cerrar la sesión
+        navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
+      }, 1 * 60 * 1000); // 1 minutos en milisegundos
+    };
+
+    // Reiniciar el temporizador en cada interacción del usuario
+    window.addEventListener("mousemove", restarTimer);
+    window.addEventListener("keydown", restarTimer);
+
+    // Iniciar el temporizador al cargar la página
+    restarTimer();
+  };
+
+  useEffect(() => {
+    startTimer();
+  }, []);
 
   const drawer = (
     <div>
@@ -196,6 +226,6 @@ function MainLayout(_props: Props) {
       </Box>
     </Box>
   );
-}
+};
 
 export default MainLayout;

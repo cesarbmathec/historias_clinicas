@@ -1,27 +1,21 @@
-import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "../components/layout/MainLayout";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import { PrivateRoutes, PublicRoutes } from "../models";
-import Home from "../components/pages/home/Home";
 import NotFoundPage from "../components/pages/not-found-page/NotFoundPage";
-import Login from "../components/pages/login/Login";
+import Private from "../components/private/Private";
+import { lazy } from "react";
+
+const Login = lazy(() => import("../components/pages/login/Login"));
 
 const Router: any = createBrowserRouter([
   {
     path: "/",
-    Component: MainLayout,
+    Component: ()=> Navigate({ to: PrivateRoutes.PRIVATE }),
     caseSensitive: true,
-    children: [
-    {
-        path: "/",
-        Component: Home,
-        caseSensitive: true,
-    },
-    {
-        path: PrivateRoutes.HOME,
-        Component: Home,
-        caseSensitive: true,
-    },
-    ],
+  },
+  {
+    path: PrivateRoutes.PRIVATE,
+    Component: Private,
+    caseSensitive: true,
   },
   {
     path: PublicRoutes.LOGIN,
