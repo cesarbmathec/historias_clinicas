@@ -7,10 +7,7 @@ const tokenURL = "api/token/";
 export const getToken: any = createAsyncThunk(
   "user/getToken",
   async (user: User) => {
-    const token = await axios.post("http://localhost:8000/" + tokenURL, {
-      username: user.username,
-      password: user.password,
-    });
+    const token = await axios.post("http://localhost:8000/" + tokenURL, user);
     return token.data;
   }
 );

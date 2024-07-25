@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Avatar,
   Box,
@@ -10,11 +9,28 @@ import {
   Paper,
 } from "@mui/material";
 import "./Login.scss";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useAppDispatch } from "../../../app/hooks";
+import { getToken } from "../../../services";
+import { User } from "../../../models";
 
 const Login = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Maneja el inicio de sesión aquí
+  const dispatch = useAppDispatch();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<User>();
+
+  const onSubmit: SubmitHandler<User> = (data) => {
+    if (data) {
+      try {
+        console.log(JSON.stringify(data));
+        dispatch(getToken(data));
+      } catch (e) {
+        console.error(e);
+      }
+    }
   };
 
   return (
@@ -35,25 +51,30 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <form
+            noValidate
+            onSubmit={handleSubmit(onSubmit)}
+            style={{ marginTop: 1 }}
+          >
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              autoComplete="username"
               autoFocus
               InputProps={{
                 startAdornment: <i className="fa-solid fa-user" />,
               }}
+              {...register("username", { required: "Username is required" })}
+              error={!!errors.username}
+              helperText={errors.username ? errors.username.message + "" : ""}
             />
             <TextField
               margin="normal"
               required
               fullWidth
-              name="password"
               label="Password"
               type="password"
               id="password"
@@ -61,6 +82,9 @@ const Login = () => {
               InputProps={{
                 startAdornment: <i className="fa-solid fa-lock" />,
               }}
+              {...register("password", { required: "Password is required" })}
+              error={!!errors.password}
+              helperText={errors.password ? errors.password.message + "" : ""}
             />
             <Button
               type="submit"
@@ -71,7 +95,7 @@ const Login = () => {
             >
               Sign In
             </Button>
-          </Box>
+          </form>
         </Box>
       </Paper>
     </Container>
