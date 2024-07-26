@@ -1,7 +1,6 @@
 import {
   AppBar,
   Box,
-  Collapse,
   CssBaseline,
   Divider,
   Drawer,
@@ -16,19 +15,21 @@ import {
 } from "@mui/material";
 import "./MainLayout.scss";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { clearLocalStorage } from "../../utilities";
-import { PublicRoutes } from "../../models";
+import { PrivateRoutes, PublicRoutes } from "../../models";
 
 type Props = {};
 const drawerWidth = 240;
 
+/* ===================================================================================
+    Main Function
+   =================================================================================== */
 const MainLayout = (_props: Props) => {
   // Hooks
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [open, setOpen] = useState(false);
 
   // Métodos
   const handleDrawerClose = () => {
@@ -46,10 +47,6 @@ const MainLayout = (_props: Props) => {
     }
   };
 
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
   // Tiempo de inactividad
   const startTimer = () => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -61,7 +58,7 @@ const MainLayout = (_props: Props) => {
         clearLocalStorage("token");
         // Mostrar un mensaje de sesión expirada y cerrar la sesión
         navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
-      }, 1 * 60 * 1000); // 1 minutos en milisegundos
+      }, 10 * 60 * 1000); // 10 minutos en milisegundos
     };
 
     // Reiniciar el temporizador en cada interacción del usuario
@@ -76,65 +73,30 @@ const MainLayout = (_props: Props) => {
     startTimer();
   }, []);
 
+  const items = [
+    {
+      key: 1,
+      title: "Pacientes",
+      link: PrivateRoutes.PACIENTE,
+      icon: "fa-solid fa-users",
+    },
+  ];
+
   const drawer = (
     <div>
+      <Toolbar />
+      <Divider />
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
+        {items.map((item) => (
+          <ListItem key={item.key} disablePadding>
+            <ListItemButton component={Link} to={item.link}>
               <ListItemIcon>
-                {index % 2 === 0 ? (
-                  <i className="fa-solid fa-inbox" />
-                ) : (
-                  <i className="fa-solid fa-mail-bulk" />
-                )}
+                <i className={item.icon} />
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={item.title} />
             </ListItemButton>
           </ListItem>
         ))}
-        <Divider />
-        {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? (
-                  <i className="fa-solid fa-inbox" />
-                ) : (
-                  <i className="fa-solid fa-mail-bulk" />
-                )}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-        <ListItem onClick={handleClick} disablePadding>
-          <ListItemButton>
-            <ListItemIcon>
-              <i className="fa-solid fa-book" />
-            </ListItemIcon>
-            <ListItemText primary="Nested Pages" />
-            {open ? (
-              <i className="fa-solid fa-caret-up" />
-            ) : (
-              <i className="fa-solid fa-caret-down" />
-            )}
-          </ListItemButton>
-        </ListItem>
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText inset primary="Nested Page 1" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemText inset primary="Nested Page 2" />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Collapse>
       </List>
     </div>
   );
@@ -159,9 +121,7 @@ const MainLayout = (_props: Props) => {
           >
             <i className="fa-solid fa-bars" />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Responsive drawer
-          </Typography>
+          <Typography variant="h6" noWrap component="div"></Typography>
         </Toolbar>
       </AppBar>
       <Box

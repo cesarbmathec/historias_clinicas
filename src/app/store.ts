@@ -1,14 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import tokenReducer from "../features/slices/token";
-import { TokenState } from "../models";
+import pacientesReducer from "../features/slices/pacientes";
+import { PacientesState, TokenState } from "../models";
 
 interface AppStore {
   token: TokenState;
+  pacientes: PacientesState;
 }
 
 const store = configureStore<AppStore>({
   reducer: {
     token: tokenReducer,
+    pacientes: pacientesReducer,
   },
 });
 

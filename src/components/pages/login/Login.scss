@@ -1,12 +1,13 @@
 /* Login.scss */
 .login-paper {
-    margin-top: 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-  }
-  
-  .fa-user, .fa-lock {
-    margin-right: 8px;
-  }
+  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.fa-user,
+.fa-lock {
+  margin-right: 8px;
+}

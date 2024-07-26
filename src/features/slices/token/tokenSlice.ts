@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TokenResult, TokenState } from "../../../models";
 import { getToken } from "../../../services";
 import { RootState } from "../../../app";
-import { keyToken, persistLocalStorage } from "../../../utilities";
+import { clearLocalStorage, keyToken, persistLocalStorage } from "../../../utilities";
 
 export const initialStateToken: TokenState = {
   tokenResult: null,
@@ -26,6 +26,8 @@ export const tokenSlice = createSlice({
     builder.addCase(getToken.pending, (state) => {
       state.loading = true;
       state.error = "";
+      // Limpiamos el 
+      clearLocalStorage(keyToken);
     });
     builder.addCase(
       getToken.fulfilled,

@@ -15,6 +15,9 @@ import { getToken } from "../../../services";
 import { PrivateRoutes, User } from "../../../models";
 import { useNavigate } from "react-router-dom";
 
+/* ====================================================================================
+  Función Principal
+  ==================================================================================== */
 const Login = () => {
   const dispatch = useAppDispatch();
   const {
