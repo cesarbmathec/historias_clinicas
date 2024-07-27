@@ -12,6 +12,8 @@ export interface PacienteResult {
 
 export interface PacientesState {
   pacientesResult: PacienteResult[];
+  pacienteResult: PacienteResult | null,
   error: string | null;
   loading: boolean;
+  loadingPaciente: boolean;
 }

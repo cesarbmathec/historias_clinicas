@@ -1,9 +1,9 @@
 import * as React from "react";
-import { alpha } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
@@ -15,18 +15,36 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import Switch from "@mui/material/Switch";
 import { RootState, useAppDispatch, useAppSelector } from "../../../app";
 import { useEffect, useState } from "react";
 import { getPacientes } from "../../../services";
 import {
-  FormControlLabel,
   InputAdornment,
   LinearProgress,
   Stack,
   TextField,
 } from "@mui/material";
 import { PacienteResult } from "../../../models";
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -78,19 +96,19 @@ const headCells: readonly HeadCell[] = [
   {
     id: "id",
     numeric: true,
-    disablePadding: false,
+    disablePadding: true,
     label: "Nro.",
   },
   {
     id: "nombre",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "Nombres",
   },
   {
     id: "cedula_identidad",
     numeric: false,
-    disablePadding: false,
+    disablePadding: true,
     label: "Identificación",
   },
 ];
@@ -124,7 +142,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
+        <TableCell padding="none" sx={{ py: 1 }}>
           <Checkbox
             color="primary"
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -218,9 +236,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             variant="h6"
             id="tableTitle"
             component="div"
-          >
-            Pacientes
-          </Typography>
+          ></Typography>
         )}
         {numSelected > 0 ? (
           <Tooltip title="Delete">
@@ -248,7 +264,6 @@ const PacienteList = () => {
   const [orderBy, setOrderBy] = React.useState<keyof PacienteResult>("nombre");
   const [selected, setSelected] = React.useState<readonly number[]>([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [searchText, setSearchText] = useState("");
 
@@ -313,10 +328,6 @@ const PacienteList = () => {
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
-
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
@@ -340,7 +351,7 @@ const PacienteList = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ maxWidth: "100%", minWidth: "300px", mb: 2 }}>
         <EnhancedTableToolbar
           numSelected={selected.length}
           searchText={searchText}
@@ -349,11 +360,11 @@ const PacienteList = () => {
         {loading ? (
           <LinearProgress />
         ) : (
-          <TableContainer>
+          <TableContainer style={{ overflowX: "auto" }}>
             <Table
-              sx={{ minWidth: 750 }}
+              sx={{ minWidth: 250 }}
               aria-labelledby="tableTitle"
-              size={dense ? "small" : "medium"}
+              size={"medium"}
             >
               <EnhancedTableHead
                 numSelected={selected.length}
@@ -380,7 +391,7 @@ const PacienteList = () => {
                         key={row.id}
                         selected={isItemSelected}
                       >
-                        <TableCell padding="checkbox">
+                        <TableCell padding="none" sx={{ py: 1 }}>
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
@@ -389,24 +400,25 @@ const PacienteList = () => {
                             }}
                           />
                         </TableCell>
-                        <TableCell component="th" id={labelId} scope="row">
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
                           {row.id}
                         </TableCell>
-                        <TableCell align="left">
+                        <TableCell align="left" padding="none">
                           {row.apellido}, {row.nombre}
                         </TableCell>
-                        <TableCell align="left">
+                        <TableCell align="left" padding="none">
                           {row.cedula_identidad}
                         </TableCell>
                       </TableRow>
                     );
                   })}
                 {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: (dense ? 33 : 53) * emptyRows,
-                    }}
-                  >
+                  <TableRow>
                     <TableCell colSpan={6} />
                   </TableRow>
                 )}
@@ -424,10 +436,6 @@ const PacienteList = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
     </Box>
   );
 };
